@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.example.administrator.coolweathe.model.City;
 import com.example.administrator.coolweathe.model.County;
 import com.example.administrator.coolweathe.model.Province;
+import com.example.administrator.coolweathe.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +20,14 @@ public class CoolWeatherDB {
     /*
     *数据库名称
     */
-    public static final String DB_NAME = "";
+    public static final String DB_NAME = "CoolWeather";
     public static final int  VERSON =1;
     private static CoolWeatherDB coolWeatherDB;
-    private SQLiteDatabase db;
+    public SQLiteDatabase db;
     private  CoolWeatherDB(Context context)
     {
         CoolWeatherOpenHelper dbHelper = new CoolWeatherOpenHelper(context,DB_NAME,null, VERSON);
-        db = dbHelper.getWritableDatabase();
+            db =dbHelper.getWritableDatabase();
     }
     public synchronized  static  CoolWeatherDB getInstance(Context context)
     {
@@ -42,7 +43,6 @@ public class CoolWeatherDB {
         if(province!=null)
         {
             ContentValues values = new ContentValues();
-            values.put("id",province.getId());
             values.put("province_name",province.getProvincename());
             values.put("province_code",province.getProvincecode());
             db.insert("Province",null,values);
@@ -76,15 +76,17 @@ public class CoolWeatherDB {
     {
         List<Province> list = new ArrayList<Province>();
         Cursor cursor = db.query("Province", null, null, null, null, null, null);
-        do
-        {
-            Province province = new Province();
-            province.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            province.setProvincecode(cursor.getString(cursor.getColumnIndex("province_code")));
-            province.setProvincename(cursor.getString(cursor.getColumnIndex("province_name")));
-            list.add(province);
+        LogUtil.d("查看curor 中是否有值："+cursor.moveToFirst());
+        if(cursor.moveToFirst()) {
+            do {
+                Province province = new Province();
+                province.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                province.setProvincecode(cursor.getString(cursor.getColumnIndex("province_code")));
+                province.setProvincename(cursor.getString(cursor.getColumnIndex("province_name")));
+                list.add(province);
+            }
+            while (cursor.moveToNext());
         }
-        while (cursor.moveToNext());
         return list;
     }
     public List<City> loadCity(int privice_code)
