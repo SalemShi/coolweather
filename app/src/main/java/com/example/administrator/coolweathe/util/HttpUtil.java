@@ -22,7 +22,7 @@ public class HttpUtil {
     public static final int OK_SUNCCESS = 1;
     public static void OKdoGet(String url,final Handler handler)
     {
-        // GET请求的封装
+        // GET
         OkHttpClient okHttpClient = new OkHttpClient();
         final Request request = new Request.Builder().url(url).build();
         Call call = okHttpClient.newCall(request);
@@ -35,7 +35,6 @@ public class HttpUtil {
             @Override
             public void onResponse(Response response) throws IOException {
                 String rusultStr = response.body().string();
-                LogUtil.d("qing qiu success"+rusultStr);
                 Message message = new Message();
                 message.obj = rusultStr;
                 message.what= OK_SUNCCESS;
@@ -46,7 +45,7 @@ public class HttpUtil {
     }
     public static void OKdoPost(String url,final Handler handler,FormEncodingBuilder builder)
     {
-        //post 请求的封装
+        //post
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url(url).post(builder.build()).build();
         okHttpClient.newCall(request).enqueue(new Callback() {

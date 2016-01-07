@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class CoolWeatherDB {
     /*
-    * ˝æ›ø‚√˚≥∆
+    *ÔøΩÔøΩÔøΩ›øÔøΩÔøΩÔøΩÔøΩÔøΩ
     */
     public static final String DB_NAME = "CoolWeather";
     public static final int  VERSON =1;
@@ -45,38 +45,44 @@ public class CoolWeatherDB {
             ContentValues values = new ContentValues();
             values.put("province_name",province.getProvincename());
             values.put("province_code",province.getProvincecode());
-            db.insert("Province",null,values);
+            db.insert("Province", null, values);
+            LogUtil.d("ÊèíÂÖ•ÁúÅÊàêÂäü");
         }
+        else
+            LogUtil.d("ÊèíÂÖ•ÁúÅÂ§±Ë¥•");
+
     }
     public void saveCity(City city)
     {
         if(city !=null)
         {
             ContentValues values = new ContentValues();
-            values.put("id",city.getId());
             values.put("city_name",city.getCityname());
             values.put("city_code",city.getCitycode());
-            values.put("province_code",city.getProvincecode());
-            db.insert("City",null,values);
+            values.put("province_code", city.getProvincecode());
+            db.insert("City", null, values);
         }
+
     }
     public void saveCounty(County county)
     {
         if(county !=null)
         {
+            LogUtil.d(county.getCoutycode()+county.getCoutyname()+county.getCitycode());
             ContentValues values = new ContentValues();
-            values.put("id", county.getId());
             values.put("county_name", county.getCoutyname());
             values.put("county_code",county.getCoutycode());
             values.put("city_code",county.getCitycode());
-            db.insert("County",null,values);
+            db.insert("County", null, values);
+            LogUtil.d("ÊèíÂÖ•ÂéøÂüéÊàêÂäü");
         }
+        else
+             LogUtil.d("ÊèíÂÖ•ÂéøÂüéÂ§±Ë¥•");
     }
     public List<Province> loadProvince()
     {
         List<Province> list = new ArrayList<Province>();
         Cursor cursor = db.query("Province", null, null, null, null, null, null);
-        LogUtil.d("≤Èø¥curor ÷– «∑Ò”–÷µ£∫"+cursor.moveToFirst());
         if(cursor.moveToFirst()) {
             do {
                 Province province = new Province();
@@ -92,31 +98,44 @@ public class CoolWeatherDB {
     public List<City> loadCity(int privice_code)
     {
         List<City> list = new ArrayList<City>();
-        Cursor cursor = db.query("City",null,"province_code=?",new String[]{""+privice_code},null,null,null);
-        do {
-            City city = new City();
-            city.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            city.setCityname(cursor.getString(cursor.getColumnIndex("city_name")));
-            city.setCitycode(cursor.getString(cursor.getColumnIndex("city_code")));
-            city.setProvincecode(cursor.getInt(cursor.getColumnIndex("province_code")));
-            list.add(city);
+       //Cursor cursor = db.query("city",null,"province_code = ?",new String[]{String.valueOf(privice_code)},null,null,null);
+       // String s ="select * from city where province_code="+String.valueOf(privice_code);
+        String s=String.valueOf(privice_code);
+        Cursor cursor = db.rawQuery("select * from city where province_code="+s,null);
+        //Cursor cursor = db.rawQuery("select * from city where province_code= ?", new String[]{String.valueOf(privice_code)});
+     //  Cursor cursor = db.query("City",null,null,null,null,null,null);
+        if(cursor.moveToFirst()) {
+            do {
+                City city = new City();
+                city.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                city.setCityname(cursor.getString(cursor.getColumnIndex("city_name")));
+                city.setCitycode(cursor.getString(cursor.getColumnIndex("city_code")));
+                city.setProvincecode(cursor.getInt(cursor.getColumnIndex("province_code")));
+                LogUtil.d("province_code="+cursor.getInt(cursor.getColumnIndex("province_code")));
+                list.add(city);
+            }
+            while (cursor.moveToNext());
         }
-        while (cursor.moveToNext());
         return list;
     }
     public List<County> loadCounty(int city_code)
     {
         List<County> list = new ArrayList<County>();
-        Cursor cursor = db.query("=County",null,"city_code=?",new String[]{""+city_code},null,null,null);
-        do {
-            County county = new County();
-            county.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            county.setCoutycode(cursor.getString(cursor.getColumnIndex("county_name")));
-            county.setCoutyname(cursor.getString(cursor.getColumnIndex("county_code")));
-            county.setCitycode(cursor.getInt(cursor.getColumnIndex("city_code")));
-            list.add(county);
+        String s =String.valueOf(city_code);
+        LogUtil.d(s);
+        Cursor cursor = db.rawQuery("select * from county where city_code=" + s, null);
+       // Cursor cursor = db.query("=County",null,"city_code=?",new String[]{String.valueOf(city_code)},null,null,null);
+        if(cursor.moveToFirst()) {
+            do {
+                County county = new County();
+                county.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                county.setCoutycode(cursor.getString(cursor.getColumnIndex("county_code")));
+                county.setCoutyname(cursor.getString(cursor.getColumnIndex("county_name")));
+                county.setCitycode(cursor.getInt(cursor.getColumnIndex("city_code")));
+                list.add(county);
+            }
+            while (cursor.moveToNext());
         }
-        while (cursor.moveToNext());
         return list;
     }
 
