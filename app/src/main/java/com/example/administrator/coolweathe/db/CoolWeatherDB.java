@@ -68,7 +68,6 @@ public class CoolWeatherDB {
     {
         if(county !=null)
         {
-            LogUtil.d(county.getCoutycode()+county.getCoutyname()+county.getCitycode());
             ContentValues values = new ContentValues();
             values.put("county_name", county.getCoutyname());
             values.put("county_code",county.getCoutycode());
@@ -111,7 +110,6 @@ public class CoolWeatherDB {
                 city.setCityname(cursor.getString(cursor.getColumnIndex("city_name")));
                 city.setCitycode(cursor.getString(cursor.getColumnIndex("city_code")));
                 city.setProvincecode(cursor.getInt(cursor.getColumnIndex("province_code")));
-                LogUtil.d("province_code="+cursor.getInt(cursor.getColumnIndex("province_code")));
                 list.add(city);
             }
             while (cursor.moveToNext());
